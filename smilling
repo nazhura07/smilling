@@ -1,0 +1,125 @@
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class ConcertSeating {
+    private static int[][] seatingChart;
+
+    public static void main(String[] args) {
+        int rows = 5; // Jumlah baris kursi
+        int columns = 5; // Jumlah kolom kursi
+
+        // Inisialisasi chart kursi
+        seatingChart = new int[rows][columns];
+        for (int i = 0; i < rows; i++) {
+            Arrays.fill(seatingChart[i], 0);
+        }
+
+        Scanner scanner = new Scanner(System.in);
+
+        // Menu utama
+        while (true) {
+            System.out.println("\n=== Sistem Pemesanan Tiket Konser ===");
+            System.out.println("1. Beli Tiket");
+            System.out.println("2. Cari Letak Kursi");
+            System.out.println("3. Lihat Kursi Kosong");
+            System.out.println("0. Keluar");
+            System.out.print("Pilih menu: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine(); 
+
+            switch (choice) {
+                case 1:
+                    beliTiket(scanner);
+                    break;
+                case 2:
+                    cariLetakKursi(scanner);
+                    break;
+                case 3:
+                    lihatKursiKosong();
+                    break;
+                case 0:
+                    System.out.println("Terima kasih!");
+                    System.exit(0);
+                default:
+                    System.out.println("Pilihan tidak valid.");
+            }
+        }
+    }
+
+    
+    private static void beliTiket(Scanner scanner) {
+        System.out.println("\n=== Pembelian Tiket ===");
+        System.out.print("Masukkan nomor baris tiket: ");
+        int row = scanner.nextInt();
+        System.out.print("Masukkan nomor kolom tiket: ");
+        int column = scanner.nextInt();
+
+        
+        int[] seatLocation = cariKursiTerjual(row, column);
+        if (seatLocation != null) {
+            System.out.println("Maaf, kursi tersebut sudah terjual.");
+        } else {
+            seatingChart[row - 1][column - 1] = 1;
+            System.out.println("Tiket berhasil dibeli.");
+        }
+    }
+
+    
+    private static void cariLetakKursi(Scanner scanner) {
+        System.out.println("\n=== Pencarian Letak Kursi ===");
+        System.out.print("Masukkan nomor baris tiket: ");
+        int row = scanner.nextInt();
+        System.out.print("Masukkan nomor kolom tiket: ");
+        int column = scanner.nextInt();
+
+        
+        if (row < 1 || row > seatingChart.length || column < 1 || column > seatingChart[0].length) {
+            System.out.println("Tiket tidak valid.");
+        } else {
+            int[] seatLocation = cariKursi(row, column);
+
+            if (seatLocation == null) {
+                System.out.println("Kursi tersebut sudah terjual atau tidak ditemukan.");
+            } else {
+                System.out.println("Kursi yang sesuai dengan tiket berada di baris " + seatLocation[0] + ", kolom " + seatLocation[1] + ".");
+            }
+        }
+    }
+
+    
+    private static int[] cariKursi(int row, int column) {
+        for (int i = 0; i < seatingChart.length; i++) {
+            for (int j = 0; j < seatingChart[i].length; j++) {
+                if (seatingChart[i][j] == 0 && i + 1 == row && j + 1 == column) {
+                    return new int[]{i + 1, j + 1}; 
+                }
+            }
+        }
+        return null; 
+    }
+
+   
+    private static int[] cariKursiTerjual(int row, int column) {
+        for (int i = 0; i < seatingChart.length; i++) {
+            for (int j = 0; j < seatingChart[i].length; j++) {
+                if (seatingChart[i][j] == 1 && i + 1 == row && j + 1 == column) {
+                    return new int[]{i + 1, j + 1}; 
+                }
+            }
+        }
+        return null; 
+    }
+
+    
+    private static void lihatKursiKosong() {
+        System.out.println("\n=== Kursi Kosong ===");
+        for (int i = 0; i < seatingChart.length; i++) {
+            for (int j = 0; j < seatingChart[i].length; j++) {
+                if (seatingChart[i][j] == 0) {
+                    System.out.println("Kursi kosong: Baris " + (i + 1) + ", Kolom " + (j + 1));
+
+                }
+            }
+        }
+    }
+}
